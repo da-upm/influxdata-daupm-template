@@ -273,7 +273,7 @@ spec:
         - hex: '#00C9FF'
           name: laser
           type: text
-      decimalPlaces: 2
+      decimalPlaces: 0
       height: 1
       kind: Single_Stat
       name: Num Images
@@ -327,7 +327,7 @@ spec:
       queries:
         - query: |-
             from(bucket: "daupm")
-              |> range(start: v.timeRangeStart)
+              |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
               |> filter(fn: (r) => r._measurement == "swap")
               |> filter(fn: (r) => r._field == "total" or r._field == "used")
               |> filter(fn: (r) => r.host == v.linux_host)
@@ -392,7 +392,7 @@ spec:
       queries:
         - query: |-
             from(bucket: "daupm")
-              |> range(start: v.timeRangeStart)
+              |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
               |> filter(fn: (r) => r._measurement == "disk")
               |> filter(fn: (r) => r._field == "used_percent")
               |> filter(fn: (r) => r.host == v.linux_host)
@@ -406,7 +406,7 @@ spec:
         - hex: '#00C9FF'
           name: laser
           type: text
-      decimalPlaces: 2
+      decimalPlaces: 0
       height: 1
       kind: Single_Stat
       name: Total Num Containers
@@ -431,7 +431,7 @@ spec:
       queries:
         - query: |-
             from(bucket: "daupm")
-              |> range(start: v.timeRangeStart)
+              |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
               |> filter(fn: (r) => r._measurement == "system")
               |> filter(fn: (r) => r._field == "load1")
               |> filter(fn: (r) => r.host == v.linux_host)
@@ -460,7 +460,7 @@ spec:
       queries:
         - query: |-
             from(bucket: "daupm")
-              |> range(start: v.timeRangeStart)
+              |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
               |> filter(fn: (r) => r._measurement == "system")
               |> filter(fn: (r) => r._field == "load1" or r._field == "load5" or r._field == "load15")
               |> filter(fn: (r) => r.host == v.linux_host)
@@ -501,10 +501,10 @@ spec:
         - hex: '#00C9FF'
           name: laser
           type: text
-      decimalPlaces: 2
+      decimalPlaces: 0
       height: 1
       kind: Single_Stat
-      name: Number of Runnng Docker containers
+      name: Number of Running Docker containers
       queries:
         - query: |-
             from(bucket: "daupm")
@@ -527,7 +527,7 @@ spec:
       queries:
         - query: |-
             from(bucket: "daupm")
-              |> range(start: v.timeRangeStart)
+              |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
               |> filter(fn: (r) => r._measurement == "docker")
               |> filter(fn: (r) => r._field == "n_cpus")
               |> filter(fn: (r) => r.host == v.linux_host)
@@ -547,19 +547,19 @@ spec:
           name: y
           scale: linear
           suffix: '%'
-        - base: "10"
-          name: y2
-          scale: linear
-      geom: line
+      colors:
+          - hex: '#00C9FF'
+            name: laser
+            type: text
       height: 3
-      kind: Xy
+      kind: Single_Stat_Plus_Line
       name: CPU Usage
       queries:
         - query: |-
             from(bucket: "daupm")
-              |> range(start: v.timeRangeStart)
+              |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
               |> filter(fn: (r) => r._measurement == "cpu")
-              |> filter(fn: (r) => r._field == "usage_user" or r._field == "usage_system" or r._field == "usage_idle")
+              |> filter(fn: (r) => r._field == "usage_system")
               |> filter(fn: (r) => r.cpu == "cpu-total")
               |> filter(fn: (r) => r.host == v.linux_host)
               |> window(period: v.windowPeriod)
@@ -648,7 +648,7 @@ spec:
       queries:
         - query: |-
             from(bucket: "daupm")
-              |> range(start: v.timeRangeStart)
+              |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
               |> filter(fn: (r) => r._measurement == "docker")
               |> filter(fn: (r) => r._field == "memory_total")
               |> filter(fn: (r) => r.host == v.linux_host)
@@ -692,7 +692,7 @@ spec:
       queries:
         - query: |-
             from(bucket: "daupm")
-              |> range(start: v.timeRangeStart)
+              |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
               |> filter(fn: (r) => r._measurement == "mem")
               |> filter(fn: (r) => r._field == "used_percent")
               |> filter(fn: (r) => r.host == v.linux_host)
