@@ -1,10 +1,10 @@
 apiVersion: influxdata.com/v2alpha1
 kind: Label
 metadata:
-    name: linux-system-template
+    name: da-upm-template
 spec:
-    name: Linux System Template
-    color: '#7A65F2'
+    name: DA-UPM Template
+    color: '#004e9c'
 ---
 apiVersion: influxdata.com/v2alpha1
 kind: Label
@@ -112,7 +112,7 @@ spec:
     name: linux_host
     associations:
       - kind: Label
-        name: linux-system-template
+        name: da-upm-template
     language: flux
     query: |-
         import "influxdata/influxdb/v1"
@@ -124,19 +124,19 @@ kind: CheckThreshold
 metadata:
   name: container-mem-usage-pct
 spec:
-  description: Container mem usage is above 80% for 15 minutes
-  every: 15m0s
-  name: Container Mem Usage Pct
+  description: El uso de memoria está por encima del 80% durante 5 minutos
+  every: 5m0s
+  name: Uso de memoria
   query: |-
     from(bucket: "daupm")
       |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
       |> filter(fn: (r) => r["_measurement"] == "docker_container_mem")
       |> filter(fn: (r) => r["_field"] == "usage_percent")
-      |> aggregateWindow(every: 15m, fn: mean)
+      |> aggregateWindow(every: 5m, fn: mean)
       |> yield(name: "mean")
   status: active
-  statusMessageTemplate: 'Check: ${ r._check_name } for container {r.container_name} on host {r.host}
-        is: ${ r._level } '
+  statusMessageTemplate: '${ r._check_name } para el contenedor ${ r.container_name } en el host ${ r.engine_host }
+        es: ${ r._level } '
   thresholds:
     - level: WARN
       type: greater
@@ -153,18 +153,18 @@ kind: CheckThreshold
 metadata:
   name: container-disk-usage-above-80
 spec:
-  description: Container disk usage is above 80%
-  every: 15m0s
-  name: Container Disk Usage
+  description: El uso de disco está por encima del 80%
+  every: 5m0s
+  name: Uso de disco de los contedores
   query: |-
     from(bucket: "daupm")
       |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
       |> filter(fn: (r) => r["_measurement"] == "docker_container_blkio")
       |> filter(fn: (r) => r["_field"] == "usage_percent")
-      |> aggregateWindow(every: 15m, fn: mean)
+      |> aggregateWindow(every: 5m, fn: mean)
       |> yield(name: "mean")
   status: active
-  statusMessageTemplate: 'Check: ${ r._check_name } on host {r.host} is: ${ r._level }'
+  statusMessageTemplate: '${ r._check_name } en el host ${ r.engine_host } es: ${ r._level }'
   thresholds:
     - level: WARN
       type: greater
@@ -181,9 +181,9 @@ kind: CheckThreshold
 metadata:
   name: container-non-zero-exit
 spec:
-  description: Container exits with a non zero exit status
+  description: Un contendor ha finalizado la ejecución con un código distinto de 0
   every: 5m0s
-  name: Container Non Zero Exit Code
+  name: Código de salida distinto de 0
   query: |-
     from(bucket: "daupm")
       |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
@@ -192,8 +192,7 @@ spec:
       |> unique()
       |> yield(name: "unique")
   status: active
-  statusMessageTemplate: 'Check: ${ r._check_name } for container {r.container_name} on host {r.host}
-        has exited with a non 0 exit code'
+  statusMessageTemplate: '${ r._check_name } para el contenedor ${ r.container_name } en el host ${ r.engine_host }'
   thresholds:
     - level: CRIT
       max: 0
@@ -205,19 +204,19 @@ kind: CheckThreshold
 metadata:
   name: container-cpu-usage-pct
 spec:
-  description: Container cpu usage is above 80% for 15 minutes
-  every: 15m0s
-  name: Container CPU Usage Pct
+  description: El uso de CPU está por encima del 80% durante 5 minutos
+  every: 5m0s
+  name: Uso de CPU
   query: |-
     from(bucket: "daupm")
       |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
       |> filter(fn: (r) => r["_measurement"] == "docker_container_cpu")
       |> filter(fn: (r) => r["_field"] == "usage_percent")
-      |> aggregateWindow(every: 15m, fn: mean)
+      |> aggregateWindow(every: 5m, fn: mean)
       |> yield(name: "mean")
   status: active
-  statusMessageTemplate: 'Check: ${ r._check_name } for container {r.container_name} on host {r.host}
-        is: ${ r._level }'
+  statusMessageTemplate: '${ r._check_name } para el contenedor ${ r.container_name } en el host ${ r.engine_host }
+        es: ${ r._level }'
   thresholds:
     - level: WARN
       type: greater
